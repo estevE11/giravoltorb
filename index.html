@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="wrapper">
+            <div v-for="(r, y) in covers" class="row" :key="refresh">
+                <div v-for="(c, x) in covers[0]" :class="['col', classes[covers[y][x]]]" @click="uncover(x, y)">
+                </div>
+                <div class="col">{{rowCount[y]}}</div>
+            </div>
+            <div class="row">
+                <div v-for="(_, x) in covers" class="col">{{colCount[x]}}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                bombs: [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                ],
+                covers: [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                ],
+                rowCount: [0, 0, 0, 0, 0],
+                colCount: [0, 0, 0, 0, 0],
+                refresh: 0,
+
+                classes: ['covered', 'uncovered', 'bomb']
+            },
+            mounted() {
+                this.generateBombs(6);
+                this.calcBombs();
+                this.refresh++;
+            },
+            methods: {
+                generateBombs(n) {
+                    for(let i = 0; i < n; i++) {
+                        let x = Math.floor(Math.random()*this.bombs[0].length);
+                        let y = Math.floor(Math.random()*this.bombs.length);
+                        while(this.bombs[y][x] == 1) {
+                            x = Math.floor(Math.random()*this.bombs[0].length);
+                            y = Math.floor(Math.random()*this.bombs.length);
+                        }
+                        this.bombs[y][x] = 1;
+                    }
+                },
+                calcBombs() {
+                    for(let y = 0; y < this.bombs.length; y++) {
+                        let count = 0;
+                        for(let x = 0; x < this.bombs[0].length; x++) {
+                            count += this.bombs[y][x];
+                        }
+                        this.rowCount[y] = count;
+                    }
+                    for(let x = 0; x < this.bombs[0].length; x++) {
+                        let count = 0;
+                        for(let y = 0; y < this.bombs.length; y++) {
+                            count += this.bombs[y][x];
+                        }
+                        this.colCount[x] = count;
+                    }
+                },
+                uncover(x, y) {
+                    if(this.bombs[y][x] == 1) this.covers[y][x] = 2;
+                    else this.covers[y][x] = 1;
+                    this.refresh++;
+                }
+            }
+        });
+    </script>
+    <style>
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+        }
+
+        .row {
+            height: 56px;
+        }
+
+        .col {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 3px 3px;
+        }
+
+        .covered {
+            background-color: grey;
+        }
+
+        .uncovered {
+            background-color: rgb(112, 172, 112);
+        }
+
+        .bomb {
+            background-color: rgb(203, 127, 86);
+        }
+    </style>
+</body>
+</html>
