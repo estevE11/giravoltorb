@@ -19,6 +19,7 @@
                 <div v-for="(_, x) in covers" class="col">{{colCount[x]}}</div>
             </div>
         </div>
+        <button @click="init()">Restart</button>
     </div>
 
     <script>
@@ -46,11 +47,15 @@
                 classes: ['covered', 'uncovered', 'bomb']
             },
             mounted() {
-                this.generateBombs(6);
-                this.calcBombs();
-                this.refresh++;
+                this.init();
             },
             methods: {
+                init() {
+                    this.coverAll();
+                    this.generateBombs(6);
+                    this.calcBombs();
+                    this.refresh++;
+                },
                 generateBombs(n) {
                     for(let i = 0; i < n; i++) {
                         let x = Math.floor(Math.random()*this.bombs[0].length);
@@ -82,6 +87,13 @@
                     if(this.bombs[y][x] == 1) this.covers[y][x] = 2;
                     else this.covers[y][x] = 1;
                     this.refresh++;
+                },
+                coverAll() {
+                    for(let y = 0; y < this.covers.length; y++) {
+                        for(let x = 0; x < this.covers[0].length; x++) {
+                            this.covers[y][x] = 0;
+                        }
+                    }
                 }
             }
         });
